@@ -12,29 +12,19 @@ const getPressureColor = (value) => {
 
 // --- COMPONENT: The 4-Zone Heatmap Visual ---
 const FootMapZones = ({ pressures }) => {
-  // Default to "safe" colors if no data yet
   const p = pressures || { heel: 100, toe: 100, met: 100, mid: 50 };
 
   return (
     <svg viewBox="0 0 100 240" className="w-full h-full drop-shadow-[0_0_15px_rgba(6,182,212,0.3)]">
-       {/* Foot Outline */}
        <path 
          d="M30,10 C10,30 0,70 10,110 C15,140 20,180 20,200 C20,220 35,235 50,235 C65,235 80,220 80,200 C80,180 85,140 90,110 C100,70 90,30 70,10 C60,0 40,0 30,10 Z" 
          fill="none" 
          stroke="#334155" 
          strokeWidth="2"
        />
-       
-       {/* ZONE 1: TOE (Hallux area) */}
        <circle cx="35" cy="40" r="18" fill={getPressureColor(p.toe)} className="opacity-70 blur-md transition-colors duration-1000" />
-       
-       {/* ZONE 2: 1st METATARSAL HEAD (Ball of foot medial) */}
        <circle cx="35" cy="90" r="16" fill={getPressureColor(p.met)} className="opacity-70 blur-md transition-colors duration-1000" />
-       
-       {/* ZONE 3: MIDFOOT (Arch area - usually cooler) */}
        <circle cx="50" cy="145" r="14" fill={getPressureColor(p.mid)} className="opacity-60 blur-lg transition-colors duration-1000" />
-
-       {/* ZONE 4: HEEL (Highest pressure) */}
        <circle cx="50" cy="200" r="20" fill={getPressureColor(p.heel)} className="opacity-80 blur-md transition-colors duration-1000" />
     </svg>
   );
@@ -62,15 +52,13 @@ export default function Home() {
   const [messageColor, setMessageColor] = useState("text-slate-400");
   const [result, setResult] = useState(null);
 
-  // --- LOGIC: The 50-Second Scan ---
   useEffect(() => {
     if (step === 2) {
       setProgress(0);
       setScanMessage("INITIALIZING BIOSENSORS...");
       setMessageColor("text-cyan-400");
-      setResult(null); // Clear previous results
+      setResult(null); 
 
-      // Start fetching data immediately in background
       const fetchData = fetch("/api/analyze", {
         method: "POST",
         body: JSON.stringify({ age, gender }),
@@ -80,7 +68,6 @@ export default function Home() {
         setProgress((old) => {
           if (old >= 100) {
             clearInterval(interval);
-            // When animation is done, ensure data is loaded before showing results
             fetchData.then(data => {
                 setResult(data);
                 setStep(3);
@@ -88,7 +75,6 @@ export default function Home() {
             return 100;
           }
 
-          // === SCRIPTED MESSAGES ===
           if (old === 5) { setScanMessage("CALIBRATING ZONE 1: TOE CONTACT..."); setMessageColor("text-blue-400"); }
           if (old === 20) { setScanMessage("CALIBRATING ZONE 2: METATARSAL HEAD..."); setMessageColor("text-blue-400"); }
           if (old === 35) { setScanMessage("⚠️ KEEP STEADY: MIDFOOT ANALYSIS..."); setMessageColor("text-yellow-400 animate-pulse"); }
@@ -99,7 +85,7 @@ export default function Home() {
 
           return old + 1;
         });
-      }, 500); // 50 Seconds Total
+      }, 500); 
 
       return () => clearInterval(interval);
     }
@@ -108,28 +94,67 @@ export default function Home() {
   // --- SCREEN 0: WELCOME ---
   if (step === 0) {
     return (
-      <main className="min-h-screen bg-black flex flex-col items-center justify-center p-4 overflow-hidden relative">
+      <main className="min-h-screen bg-black flex flex-col items-center justify-between p-4 overflow-hidden relative font-mono">
+        {/* Background Grid */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(30,58,138,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(30,58,138,0.1)_1px,transparent_1px)] bg-[size:40px_40px] opacity-20"></div>
-        <div className="relative z-10 text-center space-y-8 animate-fade-in-up">
-           <div className="relative w-40 h-40 mx-auto">
-             <div className="absolute inset-0 rounded-full border-4 border-t-cyan-500 border-r-blue-500 border-b-purple-500 border-l-pink-500 animate-spin"></div>
-             <div className="absolute inset-2 bg-slate-900 rounded-full flex items-center justify-center border border-slate-700">
-                <span className="text-5xl">🦶</span>
-             </div>
-           </div>
-           <div>
-             <h1 className="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 tracking-tighter">
-               SMART<span className="text-white">SOLE</span>
-             </h1>
-             <p className="text-slate-400 tracking-widest text-sm mt-4 font-mono">MULTI-ZONE ULCER DETECTION SYSTEM</p>
-           </div>
-           <button 
-            onClick={() => setStep(1)}
-            className="group relative px-10 py-4 bg-transparent overflow-hidden rounded-full"
-           >
-             <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-cyan-600 to-blue-700 opacity-50 group-hover:opacity-80 transition-opacity"></div>
-             <span className="relative text-white font-mono text-xl tracking-widest">INITIATE_DIAGNOSTICS</span>
-           </button>
+        
+        {/* Main Content */}
+        <div className="flex-grow flex flex-col items-center justify-center space-y-8 z-10 mt-10">
+            <div className="relative w-40 h-40 mx-auto">
+                <div className="absolute inset-0 rounded-full border-4 border-t-cyan-500 border-r-blue-500 border-b-purple-500 border-l-pink-500 animate-spin"></div>
+                <div className="absolute inset-2 bg-slate-900 rounded-full flex items-center justify-center border border-slate-700">
+                    <span className="text-5xl">🦶</span>
+                </div>
+            </div>
+            <div className="text-center">
+                <h1 className="text-5xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-600 tracking-tighter drop-shadow-lg">
+                SMART<span className="text-white">SOLE</span>
+                </h1>
+                <p className="text-slate-400 tracking-widest text-xs md:text-sm mt-4">MULTI-ZONE ULCER DETECTION SYSTEM</p>
+            </div>
+            <button 
+                onClick={() => setStep(1)}
+                className="group relative px-10 py-4 bg-transparent overflow-hidden rounded-full mt-4"
+            >
+                <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-cyan-600 to-blue-700 opacity-50 group-hover:opacity-80 transition-opacity"></div>
+                <div className="absolute inset-0 border border-cyan-400 rounded-full opacity-50"></div>
+                <span className="relative text-white text-xl tracking-widest font-bold shadow-black drop-shadow-md">INITIATE_DIAGNOSTICS</span>
+            </button>
+        </div>
+
+        {/* --- HIGHLIGHTED CREDITS CARD --- */}
+        <div className="relative z-20 w-full max-w-3xl mb-4">
+             {/* The "Glass" Card Container */}
+            <div className="bg-slate-900/80 backdrop-blur-md border border-cyan-500/30 rounded-2xl p-6 shadow-[0_0_30px_rgba(6,182,212,0.15)] flex flex-col md:flex-row items-center justify-between gap-6 transform hover:scale-[1.01] transition-transform duration-500">
+                
+                {/* Left Side: Logo */}
+                <div className="flex items-center gap-4 border-b md:border-b-0 md:border-r border-slate-700 pb-4 md:pb-0 md:pr-6 w-full md:w-auto justify-center md:justify-start">
+                    <div className="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center border border-white/20 shadow-inner">
+                         {/* Replace this SVG with <img src="/pec-logo.png" /> */}
+                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-10 h-10 text-cyan-300">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                         </svg>
+                    </div>
+                    <div className="text-left">
+                        <span className="block text-white font-bold tracking-wider text-lg">PEC</span>
+                        <span className="block text-cyan-400 text-[10px] tracking-widest uppercase">Project Showcase</span>
+                    </div>
+                </div>
+
+                {/* Right Side: Text Details */}
+                <div className="flex-grow text-center md:text-left space-y-2">
+                    <div>
+                        <p className="text-slate-400 text-[10px] uppercase tracking-widest mb-1">Developed By</p>
+                        <p className="text-white text-lg font-bold tracking-wide">MODULE GROUP <span className="text-cyan-400">(ULCER DETECTOR)</span></p>
+                    </div>
+                    <div className="pt-2 border-t border-slate-700/50 mt-2">
+                        <p className="text-slate-400 text-[10px] uppercase tracking-widest mb-1">Under The Expert Guidance Of</p>
+                        {/* GOLD TEXT FOR MENTOR */}
+                        <p className="text-yellow-400 text-xl font-bold tracking-wide drop-shadow-sm">Dr. JaiMala Gambhir</p>
+                    </div>
+                </div>
+
+            </div>
         </div>
       </main>
     );
@@ -184,15 +209,11 @@ export default function Home() {
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent animate-scan z-0"></div>
         <div className="relative z-10 w-full max-w-lg flex flex-col items-center space-y-10">
           
-          {/* Scanner Visual with 4 Zones */}
           <div className="relative w-64 h-80 border border-slate-800 rounded-3xl bg-slate-900/50 backdrop-blur-sm flex items-center justify-center overflow-hidden shadow-[0_0_50px_rgba(6,182,212,0.1)]">
              <div className="w-32 h-64 opacity-50 animate-pulse">
-                {/* Show default colors during scan */}
                 <FootMapZones pressures={null} />
              </div>
              <div className="absolute w-full h-2 bg-cyan-400 blur-sm shadow-[0_0_20px_#22d3ee] animate-scan"></div>
-             
-             {/* Progress Percentage */}
              <div className="absolute bottom-4 font-bold text-xl text-white drop-shadow-lg">
                 Scanning: {progress}%
              </div>
@@ -209,7 +230,7 @@ export default function Home() {
     );
   }
 
-  // --- SCREEN 3: RESULTS (4-ZONE DASHBOARD) ---
+  // --- SCREEN 3: RESULTS ---
   if (step === 3 && result) {
     const isRisk = result.status.includes("Risk");
     const statusColor = isRisk ? "text-red-500" : "text-emerald-400";
@@ -219,7 +240,6 @@ export default function Home() {
       <main className="min-h-screen bg-black text-white p-4 font-mono overflow-y-auto">
         <div className="max-w-6xl mx-auto pt-6 pb-12">
           
-          {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-end border-b border-slate-800 pb-4 mb-6">
             <div>
                <h1 className="text-2xl md:text-3xl font-bold tracking-tighter text-white">MULTI-ZONE ANALYSIS REPORT</h1>
@@ -234,11 +254,9 @@ export default function Home() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
-            {/* Col 1: The 4-Zone Foot Visual (Left Side) */}
             <div className={`lg:col-span-4 bg-slate-900/40 rounded-3xl border border-slate-800 p-6 flex flex-col items-center justify-center relative overflow-hidden shadow-2xl ${glowColor}`}>
                <h3 className="text-xs text-slate-400 uppercase tracking-widest mb-6 w-full text-center border-b border-slate-800 pb-2">Pressure Heatmap</h3>
                <div className="relative z-10 w-40 h-80 my-4">
-                 {/* Pass the specific zone pressures to the visual component */}
                  <FootMapZones pressures={result.pressures} />
                </div>
                {isRisk ? (
@@ -248,10 +266,7 @@ export default function Home() {
                )}
             </div>
 
-            {/* Col 2: Data Widgets (Right Side) */}
             <div className="lg:col-span-8 space-y-6">
-               
-               {/* Main Diagnosis Banner */}
                <div className={`bg-slate-900/60 backdrop-blur-md rounded-3xl border-l-8 p-8 flex flex-col md:flex-row items-center justify-between shadow-xl ${isRisk ? 'border-red-500' : 'border-emerald-500'}`}>
                   <div className="mb-4 md:mb-0">
                     <h3 className="text-slate-400 text-sm uppercase tracking-widest">System Diagnosis</h3>
@@ -263,15 +278,13 @@ export default function Home() {
                   </div>
                </div>
 
-               {/* 4-Zone Pressure Breakdown Grid */}
                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {/* Helper to render pressure box */}
                   {['Heel', 'Toe', 'Met', 'Mid'].map((zone) => {
                       const val = result.pressures[zone.toLowerCase()];
                       const color = getPressureColor(val);
                       return (
                         <div key={zone} className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center relative overflow-hidden">
-                             <div className="absolute top-0 left-0 w-full h-1" style={{backgroundColor: color}}></div>
+                             <div className="absolute top-0 left-0 w-1 h-full" style={{backgroundColor: color}}></div>
                              <h3 className="text-slate-500 text-[10px] uppercase tracking-widest mb-2">Zone: {zone}</h3>
                              <div className="text-2xl font-bold" style={{color: color}}>{val}</div>
                              <div className="text-slate-600 text-xs">kPa</div>
@@ -280,7 +293,6 @@ export default function Home() {
                   })}
                </div>
 
-               {/* Environmental Stats (Temp & Humidity) */}
                <div className="grid grid-cols-2 gap-4">
                    <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 flex items-center justify-between relative overflow-hidden">
                       <div className="absolute top-0 left-0 w-1 h-full bg-orange-500"></div>
