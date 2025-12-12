@@ -48,14 +48,20 @@ export default function Home() {
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("Male");
   
-  // SCANNING STATE
   const [progress, setProgress] = useState(0);
   const [scanMessage, setScanMessage] = useState("SYSTEM READY");
   const [messageColor, setMessageColor] = useState("text-slate-400");
   const [result, setResult] = useState(null);
+  
+  // FIXED: Store Random ID in state so it doesn't change between Server/Client
+  const [sessionID, setSessionID] = useState("---");
 
-  // CONNECTION STATE
   const [connectionStatus, setConnectionStatus] = useState("searching"); 
+
+  // --- LOGIC 0: Set Session ID on Mount (Fixes Hydration Error) ---
+  useEffect(() => {
+    setSessionID(Math.floor(Math.random() * 99999).toString());
+  }, []);
 
   // --- LOGIC 1: Connection Simulation (Step 2) ---
   useEffect(() => {
@@ -120,9 +126,8 @@ export default function Home() {
     }
   }, [step]);
 
-  // --- LOGIC 3: Jitter Effect (Step 4) - MOVED TO TOP LEVEL ---
+  // --- LOGIC 3: Jitter Effect (Step 4) ---
   useEffect(() => {
-    // Only run this logic if we are on Step 4
     if (step === 4) {
         const interval = setInterval(() => {
             setResult(prev => {
@@ -304,7 +309,8 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-between items-end border-b border-slate-800 pb-4 mb-6">
             <div>
                <div className="flex items-center gap-2"><div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div><h1 className="text-2xl md:text-3xl font-bold tracking-tighter text-white">LIVE MONITORING SESSION</h1></div>
-               <div className="flex space-x-4 text-xs text-slate-500 mt-2"><span>ID: {Math.floor(Math.random() * 99999)}</span><span>AGE: {finalResult.age}</span><span>SEX: {finalResult.gender}</span></div>
+               {/* FIXED: Using stable sessionID instead of Math.random */}
+               <div className="flex space-x-4 text-xs text-slate-500 mt-2"><span>ID: {sessionID}</span><span>AGE: {finalResult.age}</span><span>SEX: {finalResult.gender}</span></div>
             </div>
             <button onClick={() => setStep(0)} className="mt-4 md:mt-0 px-6 py-3 bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-lg text-xs tracking-widest transition">NEW_SESSION</button>
           </div>
