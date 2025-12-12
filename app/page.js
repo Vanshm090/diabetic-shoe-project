@@ -12,7 +12,6 @@ const getPressureColor = (value) => {
 
 // --- COMPONENT: The 4-Zone Heatmap Visual ---
 const FootMapZones = ({ pressures }) => {
-  // SAFETY CHECK: Ensure pressures object exists before accessing
   const p = pressures || { heel: 100, toe: 100, met: 100, mid: 50 };
 
   return (
@@ -58,7 +57,15 @@ export default function Home() {
   // CONNECTION STATE
   const [connectionStatus, setConnectionStatus] = useState("searching"); 
 
-  // --- LOGIC: The 50-Second Scan (Step 3) ---
+  // --- LOGIC 1: Connection Simulation (Step 2) ---
+  useEffect(() => {
+    if (step === 2 && connectionStatus === "searching") {
+        const timer = setTimeout(() => { setConnectionStatus("found"); }, 2500);
+        return () => clearTimeout(timer);
+    }
+  }, [step, connectionStatus]);
+
+  // --- LOGIC 2: The 50-Second Scan (Step 3) ---
   useEffect(() => {
     if (step === 3) {
       setProgress(0);
@@ -66,18 +73,16 @@ export default function Home() {
       setMessageColor("text-cyan-400");
       setResult(null); 
 
-      // 1. ATTEMPT TO FETCH FROM API
+      // Attempt fetch with fallback
       const fetchDataPromise = fetch("/api/analyze", {
         method: "POST",
         body: JSON.stringify({ age, gender }),
       })
       .then(res => {
-         // If server error, throw to catch block
          if (!res.ok) throw new Error("Server Error"); 
          return res.json();
       })
       .catch(err => {
-         // --- EMERGENCY FALLBACK: SIMULATE DATA IF API FAILS ---
          console.log("API Failed, switching to simulation mode");
          return {
              age: age || "45",
@@ -90,19 +95,16 @@ export default function Home() {
          };
       });
 
-      // 2. RUN ANIMATION
       const interval = setInterval(() => {
         setProgress((old) => {
           if (old >= 100) {
             clearInterval(interval);
-            // When done, use whatever data we got (Real or Fallback)
             fetchDataPromise.then(data => {
                 setResult(data);
                 setStep(4); 
             });
             return 100;
           }
-
           if (old === 5) { setScanMessage("CALIBRATING ZONE 1: TOE CONTACT..."); setMessageColor("text-blue-400"); }
           if (old === 20) { setScanMessage("CALIBRATING ZONE 2: METATARSAL HEAD..."); setMessageColor("text-blue-400"); }
           if (old === 35) { setScanMessage("⚠️ KEEP STEADY: MIDFOOT ANALYSIS..."); setMessageColor("text-yellow-400 animate-pulse"); }
@@ -110,7 +112,6 @@ export default function Home() {
           if (old === 70) { setScanMessage("🛑 PEAK PRESSURE LOAD TEST. DO NOT MOVE."); setMessageColor("text-orange-500 font-bold animate-pulse"); }
           if (old === 85) { setScanMessage("MEASURING SKIN HUMIDITY & TEMP..."); setMessageColor("text-emerald-400"); }
           if (old === 95) { setScanMessage("PROCESSING 4-ZONE HEATMAP..."); setMessageColor("text-white"); }
-
           return old + 1;
         });
       }, 500); 
@@ -119,13 +120,32 @@ export default function Home() {
     }
   }, [step]);
 
-  // --- LOGIC: Connection Simulation (Step 2) ---
+  // --- LOGIC 3: Jitter Effect (Step 4) - MOVED TO TOP LEVEL ---
   useEffect(() => {
-    if (step === 2 && connectionStatus === "searching") {
-        const timer = setTimeout(() => { setConnectionStatus("found"); }, 2500);
-        return () => clearTimeout(timer);
+    // Only run this logic if we are on Step 4
+    if (step === 4) {
+        const interval = setInterval(() => {
+            setResult(prev => {
+                if (!prev) return null;
+                const noise = (val) => Math.max(0, val + Math.floor(Math.random() * 5) - 2);
+                const tempNoise = (val) => (parseFloat(val) + (Math.random() * 0.2 - 0.1)).toFixed(1);
+                return {
+                    ...prev,
+                    pressures: {
+                        heel: noise(prev.pressures?.heel || 200),
+                        toe: noise(prev.pressures?.toe || 150),
+                        met: noise(prev.pressures?.met || 130),
+                        mid: noise(prev.pressures?.mid || 50),
+                    },
+                    temp: tempNoise(prev.temp || 31),
+                    humidity: noise(prev.humidity || 40)
+                };
+            });
+        }, 800);
+        return () => clearInterval(interval);
     }
-  }, [step, connectionStatus]);
+  }, [step]);
+
 
   const handleConnect = () => {
       setConnectionStatus("connecting");
@@ -277,29 +297,6 @@ export default function Home() {
     const isRisk = finalResult.status ? finalResult.status.includes("Risk") : false;
     const statusColor = isRisk ? "text-red-500" : "text-emerald-400";
     const glowColor = isRisk ? "shadow-red-500/20" : "shadow-emerald-500/20";
-
-    // LIVE JITTER EFFECT
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setResult(prev => {
-                if (!prev) return null;
-                const noise = (val) => Math.max(0, val + Math.floor(Math.random() * 5) - 2);
-                const tempNoise = (val) => (parseFloat(val) + (Math.random() * 0.2 - 0.1)).toFixed(1);
-                return {
-                    ...prev,
-                    pressures: {
-                        heel: noise(prev.pressures?.heel || 200),
-                        toe: noise(prev.pressures?.toe || 150),
-                        met: noise(prev.pressures?.met || 130),
-                        mid: noise(prev.pressures?.mid || 50),
-                    },
-                    temp: tempNoise(prev.temp || 31),
-                    humidity: noise(prev.humidity || 40)
-                };
-            });
-        }, 800); 
-        return () => clearInterval(interval);
-    }, []);
 
     return (
       <main className="min-h-screen bg-black text-white p-4 font-mono overflow-y-auto">
