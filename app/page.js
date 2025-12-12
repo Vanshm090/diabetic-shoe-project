@@ -44,16 +44,23 @@ const LiveGraph = () => (
 // --- MAIN APP ---
 
 export default function Home() {
+  // STEPS: 0=Landing, 1=Input, 2=Connect Device, 3=Scanning, 4=Results
   const [step, setStep] = useState(0);
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("Male");
+  
+  // SCANNING STATE
   const [progress, setProgress] = useState(0);
   const [scanMessage, setScanMessage] = useState("SYSTEM READY");
   const [messageColor, setMessageColor] = useState("text-slate-400");
   const [result, setResult] = useState(null);
 
+  // CONNECTION STATE
+  const [connectionStatus, setConnectionStatus] = useState("searching"); // searching, found, connecting, success
+
+  // --- LOGIC: The 50-Second Scan (Now Step 3) ---
   useEffect(() => {
-    if (step === 2) {
+    if (step === 3) {
       setProgress(0);
       setScanMessage("INITIALIZING BIOSENSORS...");
       setMessageColor("text-cyan-400");
@@ -70,7 +77,7 @@ export default function Home() {
             clearInterval(interval);
             fetchData.then(data => {
                 setResult(data);
-                setStep(3);
+                setStep(4); // Go to results
             });
             return 100;
           }
@@ -91,14 +98,32 @@ export default function Home() {
     }
   }, [step]);
 
+  // --- LOGIC: Simulate Connection (Step 2) ---
+  useEffect(() => {
+    if (step === 2 && connectionStatus === "searching") {
+        // Find device after 2 seconds
+        const timer = setTimeout(() => {
+            setConnectionStatus("found");
+        }, 2500);
+        return () => clearTimeout(timer);
+    }
+  }, [step, connectionStatus]);
+
+  const handleConnect = () => {
+      setConnectionStatus("connecting");
+      setTimeout(() => {
+          setConnectionStatus("success");
+          // Wait a moment then start scan
+          setTimeout(() => setStep(3), 1500);
+      }, 2000);
+  };
+
   // --- SCREEN 0: WELCOME ---
   if (step === 0) {
     return (
       <main className="min-h-screen bg-black flex flex-col items-center justify-between p-4 overflow-hidden relative font-mono">
-        {/* Background Grid */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(30,58,138,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(30,58,138,0.1)_1px,transparent_1px)] bg-[size:40px_40px] opacity-20"></div>
         
-        {/* Main Content */}
         <div className="flex-grow flex flex-col items-center justify-center space-y-8 z-10 mt-10">
             <div className="relative w-40 h-40 mx-auto">
                 <div className="absolute inset-0 rounded-full border-4 border-t-cyan-500 border-r-blue-500 border-b-purple-500 border-l-pink-500 animate-spin"></div>
@@ -122,15 +147,10 @@ export default function Home() {
             </button>
         </div>
 
-        {/* --- HIGHLIGHTED CREDITS CARD --- */}
         <div className="relative z-20 w-full max-w-3xl mb-4">
-             {/* The "Glass" Card Container */}
             <div className="bg-slate-900/80 backdrop-blur-md border border-cyan-500/30 rounded-2xl p-6 shadow-[0_0_30px_rgba(6,182,212,0.15)] flex flex-col md:flex-row items-center justify-between gap-6 transform hover:scale-[1.01] transition-transform duration-500">
-                
-                {/* Left Side: Logo */}
                 <div className="flex items-center gap-4 border-b md:border-b-0 md:border-r border-slate-700 pb-4 md:pb-0 md:pr-6 w-full md:w-auto justify-center md:justify-start">
                     <div className="w-16 h-16 bg-white/10 rounded-xl flex items-center justify-center border border-white/20 shadow-inner">
-                         {/* Replace this SVG with <img src="/pec-logo.png" /> */}
                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-10 h-10 text-cyan-300">
                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                          </svg>
@@ -140,8 +160,6 @@ export default function Home() {
                         <span className="block text-cyan-400 text-[10px] tracking-widest uppercase">Project Showcase</span>
                     </div>
                 </div>
-
-                {/* Right Side: Text Details */}
                 <div className="flex-grow text-center md:text-left space-y-2">
                     <div>
                         <p className="text-slate-400 text-[10px] uppercase tracking-widest mb-1">Developed By</p>
@@ -149,11 +167,9 @@ export default function Home() {
                     </div>
                     <div className="pt-2 border-t border-slate-700/50 mt-2">
                         <p className="text-slate-400 text-[10px] uppercase tracking-widest mb-1">Under The Expert Guidance Of</p>
-                        {/* GOLD TEXT FOR MENTOR */}
                         <p className="text-yellow-400 text-xl font-bold tracking-wide drop-shadow-sm">Dr. JaiMala Gambhir</p>
                     </div>
                 </div>
-
             </div>
         </div>
       </main>
@@ -194,7 +210,7 @@ export default function Home() {
               onClick={() => setStep(2)} 
               className="w-full py-5 bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-bold tracking-[0.2em] rounded-xl hover:brightness-110 disabled:opacity-30 disabled:cursor-not-allowed transition-all mt-4 shadow-lg shadow-cyan-500/20"
             >
-              ACTIVATE_SENSORS
+              SEARCH_DEVICE
             </button>
           </div>
         </div>
@@ -202,8 +218,66 @@ export default function Home() {
     );
   }
 
-  // --- SCREEN 2: SCANNING ---
+  // --- SCREEN 2: CONNECT TO DEVICE (NEW STEP) ---
   if (step === 2) {
+    return (
+        <main className="min-h-screen bg-slate-950 flex items-center justify-center p-4 font-mono">
+            <div className="w-full max-w-md bg-black/60 backdrop-blur-xl border border-slate-800 p-8 rounded-3xl shadow-2xl relative text-center">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500"></div>
+                
+                <h2 className="text-xl text-white tracking-widest mb-2">DEVICE PAIRING</h2>
+                <p className="text-slate-500 text-xs uppercase tracking-wider mb-8">Scanning for nearby modules...</p>
+
+                {connectionStatus === "searching" && (
+                     <div className="flex flex-col items-center py-8">
+                         <div className="w-16 h-16 border-4 border-slate-700 border-t-blue-500 rounded-full animate-spin mb-6"></div>
+                         <p className="text-blue-400 animate-pulse">Searching...</p>
+                     </div>
+                )}
+
+                {connectionStatus === "found" && (
+                    <div className="py-4 animate-fade-in-up">
+                        <div className="bg-slate-900 border border-blue-500/50 p-4 rounded-xl flex items-center justify-between mb-6 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                            <div className="flex items-center gap-3">
+                                <div className="text-2xl">📶</div>
+                                <div className="text-left">
+                                    <p className="text-white font-bold">ESP8266EX</p>
+                                    <p className="text-xs text-slate-400">Signal: Strong (-42dBm)</p>
+                                </div>
+                            </div>
+                            <button 
+                                onClick={handleConnect}
+                                className="bg-blue-600 hover:bg-blue-500 text-white text-xs px-4 py-2 rounded-lg font-bold transition-colors"
+                            >
+                                CONNECT
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {connectionStatus === "connecting" && (
+                     <div className="flex flex-col items-center py-8">
+                         <div className="w-12 h-12 bg-blue-500 rounded-full animate-ping mb-4 opacity-50"></div>
+                         <p className="text-white">Establishing Secure Handshake...</p>
+                     </div>
+                )}
+
+                {connectionStatus === "success" && (
+                     <div className="flex flex-col items-center py-8">
+                         <div className="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(16,185,129,0.5)]">
+                            <span className="text-3xl text-black">✓</span>
+                         </div>
+                         <p className="text-emerald-400 font-bold tracking-widest">DEVICE CONNECTED</p>
+                         <p className="text-slate-500 text-xs mt-2">Redirecting to scan...</p>
+                     </div>
+                )}
+            </div>
+        </main>
+    );
+  }
+
+  // --- SCREEN 3: SCANNING ---
+  if (step === 3) {
     return (
       <main className="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative overflow-hidden font-mono">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent animate-scan z-0"></div>
@@ -230,11 +304,34 @@ export default function Home() {
     );
   }
 
-  // --- SCREEN 3: RESULTS ---
-  if (step === 3 && result) {
+  // --- SCREEN 4: RESULTS ---
+  if (step === 4 && result) {
     const isRisk = result.status.includes("Risk");
     const statusColor = isRisk ? "text-red-500" : "text-emerald-400";
     const glowColor = isRisk ? "shadow-red-500/20" : "shadow-emerald-500/20";
+
+    // Live Jitter Effect
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setResult(prev => {
+                if (!prev) return null;
+                const noise = (val) => Math.max(0, val + Math.floor(Math.random() * 5) - 2);
+                const tempNoise = (val) => (parseFloat(val) + (Math.random() * 0.2 - 0.1)).toFixed(1);
+                return {
+                    ...prev,
+                    pressures: {
+                        heel: noise(prev.pressures.heel),
+                        toe: noise(prev.pressures.toe),
+                        met: noise(prev.pressures.met),
+                        mid: noise(prev.pressures.mid),
+                    },
+                    temp: tempNoise(prev.temp),
+                    humidity: noise(prev.humidity)
+                };
+            });
+        }, 800); 
+        return () => clearInterval(interval);
+    }, []);
 
     return (
       <main className="min-h-screen bg-black text-white p-4 font-mono overflow-y-auto">
@@ -242,7 +339,10 @@ export default function Home() {
           
           <div className="flex flex-col md:flex-row justify-between items-end border-b border-slate-800 pb-4 mb-6">
             <div>
-               <h1 className="text-2xl md:text-3xl font-bold tracking-tighter text-white">MULTI-ZONE ANALYSIS REPORT</h1>
+               <div className="flex items-center gap-2">
+                   <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                   <h1 className="text-2xl md:text-3xl font-bold tracking-tighter text-white">LIVE MONITORING SESSION</h1>
+               </div>
                <div className="flex space-x-4 text-xs text-slate-500 mt-2">
                   <span>ID: {Math.floor(Math.random() * 99999)}</span>
                   <span>AGE: {result.age}</span>
@@ -284,9 +384,9 @@ export default function Home() {
                       const color = getPressureColor(val);
                       return (
                         <div key={zone} className="bg-slate-900/50 border border-slate-800 rounded-2xl p-4 text-center relative overflow-hidden">
-                             <div className="absolute top-0 left-0 w-1 h-full" style={{backgroundColor: color}}></div>
+                             <div className="absolute top-0 left-0 w-1 h-full transition-all duration-300" style={{backgroundColor: color}}></div>
                              <h3 className="text-slate-500 text-[10px] uppercase tracking-widest mb-2">Zone: {zone}</h3>
-                             <div className="text-2xl font-bold" style={{color: color}}>{val}</div>
+                             <div className="text-2xl font-bold tabular-nums" style={{color: color}}>{val}</div>
                              <div className="text-slate-600 text-xs">kPa</div>
                         </div>
                       );
@@ -298,7 +398,7 @@ export default function Home() {
                       <div className="absolute top-0 left-0 w-1 h-full bg-orange-500"></div>
                       <div>
                         <h3 className="text-slate-500 text-xs uppercase tracking-widest mb-1">Skin Temp</h3>
-                        <div className={`text-3xl font-bold ${parseFloat(result.temp) > 33 ? "text-orange-400" : "text-emerald-400"}`}>{result.temp}°C</div>
+                        <div className={`text-3xl font-bold tabular-nums ${parseFloat(result.temp) > 33 ? "text-orange-400" : "text-emerald-400"}`}>{result.temp}°C</div>
                       </div>
                       <div className="text-3xl opacity-30">🌡️</div>
                    </div>
@@ -307,12 +407,11 @@ export default function Home() {
                       <div className="absolute top-0 left-0 w-1 h-full bg-cyan-500"></div>
                       <div>
                         <h3 className="text-slate-500 text-xs uppercase tracking-widest mb-1">Humidity</h3>
-                        <div className="text-3xl font-bold text-cyan-400">{result.humidity}%</div>
+                        <div className="text-3xl font-bold text-cyan-400 tabular-nums">{result.humidity}%</div>
                       </div>
                        <div className="text-3xl opacity-30">💧</div>
                    </div>
                </div>
-
             </div>
           </div>
         </div>
