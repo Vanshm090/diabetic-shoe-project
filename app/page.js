@@ -118,14 +118,14 @@ export default function Home() {
 
   // --- COMPONENT: World-Class Trust Badge (Centered Credits) ---
   const InstitutionalBadge = () => (
-    <div className="inline-flex flex-col items-center justify-center p-5 bg-white border border-slate-100 rounded-3xl shadow-sm mb-10 transition-all hover:shadow-md">
+    <div className="inline-flex flex-col items-center justify-center p-5 bg-white border border-slate-100 rounded-3xl shadow-sm mb-10 transition-all hover:shadow-md cursor-default">
        <div className="flex items-center gap-3 mb-4">
           <div className="w-8 h-8 bg-teal-600 text-white rounded-lg flex items-center justify-center font-black text-xs tracking-widest shadow-sm">PEC</div>
           <div className="h-4 w-px bg-slate-200"></div>
-          <span className="text-xs font-bold text-slate-700 tracking-widest uppercase">Module Group Showcase</span>
+          <span className="text-sm font-black text-slate-800 tracking-widest uppercase">Made In PEC</span>
        </div>
        <div className="text-xs font-medium text-slate-500 bg-slate-50 px-5 py-2 rounded-full border border-slate-100">
-          Under the expert guidance of <span className="font-bold text-teal-700">Dr. Jai Mala Gambhir</span>
+          Module Group • Under the expert guidance of <span className="font-bold text-teal-700">Dr. Jai Mala Gambhir</span>
        </div>
     </div>
   );
@@ -137,7 +137,6 @@ export default function Home() {
       <main className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-6 text-slate-800 font-sans selection:bg-teal-200">
         <div className="flex flex-col items-center justify-center w-full max-w-4xl text-center">
             
-            {/* Centered Institutional Trust Badge */}
             <InstitutionalBadge />
             
             <div className="w-24 h-24 bg-gradient-to-tr from-teal-100 to-teal-50 text-teal-600 rounded-[2rem] flex items-center justify-center shadow-sm border border-white mb-8">
@@ -217,7 +216,6 @@ export default function Home() {
       <main className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-6 text-center font-sans">
          <div className="flex-grow flex flex-col items-center justify-center w-full max-w-md">
              
-             {/* Re-introduce the badge to keep them company while loading */}
              <InstitutionalBadge />
 
              <div className="w-24 h-24 border-[5px] border-slate-100 border-t-teal-500 rounded-full animate-spin mb-10 shadow-sm"></div>
@@ -287,7 +285,7 @@ export default function Home() {
                             <h3 className="text-xl font-extrabold text-slate-800 tracking-tight">Care Metrics Breakdown</h3>
                             <p className="text-sm text-slate-500 mt-1 font-medium">Calculated using EWMA predictive modeling.</p>
                         </div>
-                        <div className="w-12 h-12 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center font-bold">PEC</div>
+                        <div className="w-12 h-12 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center font-bold shadow-sm">PEC</div>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-5">
