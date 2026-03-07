@@ -14,27 +14,34 @@ export async function POST(request) {
         throw new Error("No CSV data provided");
     }
 
-    // 1. PARSE CSV DATA
+    // 1. BULLETPROOF CSV PARSER
     const rows = csvData.trim().split('\n');
     let P1_all=[], P2_all=[], P3_all=[], P4_all=[], T_all=[], RH_all=[];
     
-    // Skip header if it exists, parse rows
-    const startIndex = rows[0].toLowerCase().includes('time') ? 1 : 0;
-    
-    for (let i = startIndex; i < rows.length; i++) {
-        const cols = rows[i].split(',');
+    for (let i = 0; i < rows.length; i++) {
+        const line = rows[i].trim();
+        
+        // Skip completely empty lines (very common in Bluetooth logs)
+        if (!line) continue; 
+        
+        // If you accidentally included a header string, ignore it
+        if (line.toLowerCase().includes('p1') || line.toLowerCase().includes('time')) continue;
+
+        const cols = line.split(',');
+        
+        // Ensure the row actually has all 7 columns before doing math
         if (cols.length >= 7) {
             P1_all.push(parseFloat(cols[1])); // Toe
             P2_all.push(parseFloat(cols[2])); // Metatarsal
             P3_all.push(parseFloat(cols[3])); // Midfoot
             P4_all.push(parseFloat(cols[4])); // Heel
-            T_all.push(parseFloat(cols[5]));
-            RH_all.push(parseFloat(cols[6]));
+            T_all.push(parseFloat(cols[5]));  // Temp
+            RH_all.push(parseFloat(cols[6])); // Humidity
         }
     }
 
     const numSamples = T_all.length;
-    if (numSamples === 0) throw new Error("CSV contains no valid data");
+    if (numSamples === 0) throw new Error("Log file contains no valid 7-column data rows");
 
     // Helper: Calculate Z-Score
     const calcZ = (val, mu, sigma) => (val - mu) / sigma;
