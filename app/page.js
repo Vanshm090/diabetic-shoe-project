@@ -15,11 +15,11 @@ const FootMapZones = ({ pressures }) => {
   const p = pressures || { heel: 100, toe: 100, met: 100, mid: 50 };
 
   return (
-    <svg viewBox="0 0 100 240" className="w-full h-full max-h-80 mx-auto">
+    <svg viewBox="0 0 100 240" className="w-full h-full max-h-80 mx-auto drop-shadow-sm">
        <path 
          d="M30,10 C10,30 0,70 10,110 C15,140 20,180 20,200 C20,220 35,235 50,235 C65,235 80,220 80,200 C80,180 85,140 90,110 C100,70 90,30 70,10 C60,0 40,0 30,10 Z" 
          fill="#f8fafc" 
-         stroke="#cbd5e1" 
+         stroke="#e2e8f0" 
          strokeWidth="2"
        />
        <circle cx="35" cy="40" r="18" fill={getPressureColor(p.toe)} className="opacity-80 blur-[6px] transition-colors duration-1000" />
@@ -44,7 +44,6 @@ export default function Home() {
   const [sessionID, setSessionID] = useState("---");
   const [currentTip, setCurrentTip] = useState("");
 
-  // Set ID and change Tip on every step change to avoid Hydration errors
   useEffect(() => {
     if (step === 0) setSessionID(`PT-${Math.floor(1000 + Math.random() * 9000)}`);
     
@@ -108,52 +107,51 @@ export default function Home() {
 
   // --- COMPONENT: Tip of the Day ---
   const CareTip = () => (
-    <div className="mt-8 p-5 bg-teal-50/80 border border-teal-100 rounded-2xl flex items-start gap-4 shadow-sm w-full max-w-lg mx-auto backdrop-blur-sm">
-        <div className="text-teal-500 text-2xl mt-0.5">💡</div>
-        <div className="text-left">
-            <h4 className="text-teal-800 font-bold text-xs uppercase tracking-widest mb-1">Daily Care Tip</h4>
-            <p className="text-teal-700 text-sm font-medium leading-relaxed">{currentTip}</p>
+    <div className="mt-10 p-5 bg-white border border-slate-100 rounded-3xl flex items-start gap-4 shadow-sm w-full max-w-lg mx-auto">
+        <div className="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center text-teal-500 text-xl flex-shrink-0">💡</div>
+        <div className="text-left pt-0.5">
+            <h4 className="text-slate-800 font-bold text-xs uppercase tracking-widest mb-1">Daily Care Tip</h4>
+            <p className="text-slate-500 text-sm font-medium leading-relaxed">{currentTip}</p>
         </div>
     </div>
   );
 
-  // --- COMPONENT: Official Institutional Header ---
-  const AcademicHeader = () => (
-    <header className="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 py-3 px-6 md:px-12 flex flex-col md:flex-row items-center justify-between z-50 shadow-sm">
-       <div className="flex items-center gap-4 mb-2 md:mb-0">
-          <div className="w-10 h-10 bg-teal-600 text-white rounded-lg flex items-center justify-center font-black text-sm tracking-widest shadow-md">PEC</div>
-          <div className="text-left">
-             <p className="text-sm font-extrabold text-slate-800 uppercase tracking-wider">Punjab Engineering College</p>
-             <p className="text-[10px] font-bold text-teal-600 uppercase tracking-widest">Module Group • Ulcer Detector</p>
-          </div>
+  // --- COMPONENT: World-Class Trust Badge (Centered Credits) ---
+  const InstitutionalBadge = () => (
+    <div className="inline-flex flex-col items-center justify-center p-5 bg-white border border-slate-100 rounded-3xl shadow-sm mb-10 transition-all hover:shadow-md">
+       <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 bg-teal-600 text-white rounded-lg flex items-center justify-center font-black text-xs tracking-widest shadow-sm">PEC</div>
+          <div className="h-4 w-px bg-slate-200"></div>
+          <span className="text-xs font-bold text-slate-700 tracking-widest uppercase">Module Group Showcase</span>
        </div>
-       <div className="text-center md:text-right">
-          <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-0.5">Under the Expert Guidance of</p>
-          <p className="text-sm font-extrabold text-slate-800">Dr. Jai Mala Gambhir</p>
+       <div className="text-xs font-medium text-slate-500 bg-slate-50 px-5 py-2 rounded-full border border-slate-100">
+          Under the expert guidance of <span className="font-bold text-teal-700">Dr. Jai Mala Gambhir</span>
        </div>
-    </header>
+    </div>
   );
 
 
-  // --- SCREEN 0: SOOTHING LANDING PAGE ---
+  // --- SCREEN 0: ELEGANT LANDING PAGE ---
   if (step === 0) {
     return (
-      <main className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 pt-28 text-slate-800 font-sans selection:bg-teal-200">
-        <AcademicHeader />
-        
-        <div className="flex-grow flex flex-col items-center justify-center w-full max-w-4xl text-center">
-            <div className="w-24 h-24 bg-teal-100 text-teal-600 rounded-3xl flex items-center justify-center shadow-sm mb-6 transform hover:scale-105 transition-transform">
+      <main className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-6 text-slate-800 font-sans selection:bg-teal-200">
+        <div className="flex flex-col items-center justify-center w-full max-w-4xl text-center">
+            
+            {/* Centered Institutional Trust Badge */}
+            <InstitutionalBadge />
+            
+            <div className="w-24 h-24 bg-gradient-to-tr from-teal-100 to-teal-50 text-teal-600 rounded-[2rem] flex items-center justify-center shadow-sm border border-white mb-8">
                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
             </div>
             
-            <h1 className="text-5xl md:text-6xl font-extrabold text-slate-800 tracking-tight mb-4">
+            <h1 className="text-6xl md:text-7xl font-extrabold text-slate-900 tracking-tight mb-6">
                 Smart<span className="text-teal-500">Sole</span>
             </h1>
-            <p className="text-slate-500 text-lg md:text-xl max-w-xl font-medium mb-10">
+            <p className="text-slate-500 text-xl max-w-2xl font-medium mb-12 leading-relaxed">
                 Gentle, predictive care for Diabetic Foot Health. Early detection starts with a single step.
             </p>
             
-            <button onClick={() => setStep(1)} className="px-10 py-4 bg-teal-500 hover:bg-teal-600 text-white text-lg font-semibold rounded-2xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-0.5">
+            <button onClick={() => setStep(1)} className="px-12 py-5 bg-teal-600 hover:bg-teal-500 text-white text-lg font-bold rounded-full shadow-lg hover:shadow-xl hover:shadow-teal-500/20 transition-all transform hover:-translate-y-0.5">
                 Begin Health Assessment
             </button>
 
@@ -166,49 +164,49 @@ export default function Home() {
   // --- SCREEN 1: INPUT & UPLOAD FILE ---
   if (step === 1) {
     return (
-      <main className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 pt-28 font-sans">
-        <AcademicHeader />
+      <main className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-6 font-sans">
         
-        <div className="w-full max-w-lg bg-white border border-slate-100 p-8 rounded-3xl shadow-sm z-10">
-          <div className="flex items-center justify-between mb-8">
+        <div className="w-full max-w-xl bg-white border border-slate-100 p-10 rounded-[2.5rem] shadow-sm z-10">
+          
+          <div className="flex items-center justify-between mb-10">
               <div>
-                  <h2 className="text-2xl font-bold text-slate-800">Patient Profile</h2>
-                  <p className="text-slate-500 text-sm mt-1">Please enter your details below.</p>
+                  <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Patient Profile</h2>
+                  <p className="text-slate-500 text-sm mt-1 font-medium">Please enter the subject details.</p>
               </div>
-              <span className="text-xs font-mono font-semibold text-teal-700 bg-teal-50 border border-teal-100 px-3 py-1.5 rounded-lg">ID: {sessionID}</span>
+              <span className="text-xs font-mono font-bold text-teal-700 bg-teal-50 border border-teal-100 px-4 py-2 rounded-xl shadow-sm">ID: {sessionID}</span>
           </div>
           
-          <div className="grid grid-cols-2 gap-5 mb-8">
+          <div className="grid grid-cols-2 gap-6 mb-10">
             <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Age</label>
-                <input type="number" value={age} onChange={(e) => setAge(e.target.value)} className="w-full bg-slate-50 border border-slate-200 text-slate-900 p-4 rounded-xl focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:outline-none transition-all" placeholder="e.g. 55" />
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Age</label>
+                <input type="number" value={age} onChange={(e) => setAge(e.target.value)} className="w-full bg-slate-50 border border-slate-100 text-slate-900 p-5 rounded-2xl focus:ring-4 focus:ring-teal-50 focus:border-teal-400 focus:outline-none transition-all font-semibold" placeholder="e.g. 55" />
             </div>
             <div>
-                <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Biological Sex</label>
-                <select value={gender} onChange={(e) => setGender(e.target.value)} className="w-full bg-slate-50 border border-slate-200 text-slate-900 p-4 rounded-xl focus:ring-2 focus:ring-teal-400 focus:border-teal-400 focus:outline-none transition-all appearance-none cursor-pointer">
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Biological Sex</label>
+                <select value={gender} onChange={(e) => setGender(e.target.value)} className="w-full bg-slate-50 border border-slate-100 text-slate-900 p-5 rounded-2xl focus:ring-4 focus:ring-teal-50 focus:border-teal-400 focus:outline-none transition-all appearance-none cursor-pointer font-semibold">
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                 </select>
             </div>
           </div>
 
-          <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Sensor Data</label>
-          <div className="border-2 border-dashed border-slate-200 rounded-2xl p-8 text-center hover:bg-teal-50/50 hover:border-teal-400 transition-colors cursor-pointer relative mb-8 bg-slate-50 group">
+          <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Sensor Data Log</label>
+          <div className="border-2 border-dashed border-slate-200 rounded-3xl p-10 text-center hover:bg-teal-50/30 hover:border-teal-300 transition-all cursor-pointer relative mb-10 bg-slate-50 group">
               <input type="file" accept=".csv,.txt" onChange={handleFileUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-              <div className="w-14 h-14 bg-white shadow-sm text-teal-500 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
+              <div className="w-16 h-16 bg-white shadow-sm border border-slate-100 text-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:scale-110 group-hover:rotate-3 transition-transform">
+                  <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
               </div>
-              <p className="text-slate-700 font-semibold">{fileName ? fileName : "Upload SmartSole Log"}</p>
-              <p className="text-slate-400 text-xs mt-2">.CSV format supported</p>
+              <p className="text-slate-800 font-bold text-lg">{fileName ? fileName : "Upload SmartSole Log"}</p>
+              <p className="text-slate-400 text-sm mt-2 font-medium">.CSV format supported</p>
           </div>
 
           <div className="flex gap-4">
-              <button onClick={() => setStep(0)} className="w-1/3 py-4 text-slate-500 font-semibold hover:bg-slate-100 rounded-xl transition-colors">Back</button>
-              <button disabled={!age || !csvData} onClick={() => setStep(2)} className="w-2/3 py-4 bg-teal-500 hover:bg-teal-600 disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold rounded-xl shadow-sm transition-all">Start Analysis</button>
+              <button onClick={() => setStep(0)} className="w-1/3 py-5 text-slate-500 font-bold hover:bg-slate-100 rounded-2xl transition-colors">Back</button>
+              <button disabled={!age || !csvData} onClick={() => setStep(2)} className="w-2/3 py-5 bg-teal-600 hover:bg-teal-500 disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold rounded-2xl shadow-md transition-all">Start Analysis</button>
           </div>
         </div>
         
-        <div className="mt-4"><CareTip /></div>
+        <CareTip />
       </main>
     );
   }
@@ -216,16 +214,18 @@ export default function Home() {
   // --- SCREEN 2: SOOTHING LOADING SCREEN ---
   if (step === 2) {
     return (
-      <main className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 pt-28 text-center font-sans">
-         <AcademicHeader />
-         
+      <main className="min-h-screen bg-[#F8FAFC] flex flex-col items-center justify-center p-6 text-center font-sans">
          <div className="flex-grow flex flex-col items-center justify-center w-full max-w-md">
-             <div className="w-20 h-20 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin mb-8 shadow-sm"></div>
-             <h2 className="text-2xl font-bold text-slate-800 mb-3">Reviewing Health Data</h2>
-             <p className="text-slate-500 font-medium mb-10 h-6 animate-pulse">{scanMessage}</p>
              
-             <div className="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden shadow-inner mb-12">
-                 <div className="h-full bg-teal-500 transition-all duration-75 ease-out" style={{width: `${progress}%`}}></div>
+             {/* Re-introduce the badge to keep them company while loading */}
+             <InstitutionalBadge />
+
+             <div className="w-24 h-24 border-[5px] border-slate-100 border-t-teal-500 rounded-full animate-spin mb-10 shadow-sm"></div>
+             <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight mb-4">Reviewing Health Data</h2>
+             <p className="text-slate-500 font-medium mb-12 h-6 animate-pulse">{scanMessage}</p>
+             
+             <div className="w-full bg-slate-200 h-3 rounded-full overflow-hidden shadow-inner mb-12">
+                 <div className="h-full bg-teal-500 transition-all duration-75 ease-out rounded-full" style={{width: `${progress}%`}}></div>
              </div>
 
              <CareTip />
@@ -242,21 +242,19 @@ export default function Home() {
     const statusIcon = isRisk ? "⚠️" : "✨";
 
     return (
-      <main className="min-h-screen bg-slate-50 text-slate-800 p-4 md:p-8 pt-28 font-sans pb-20">
-        <AcademicHeader />
-        
-        <div className="max-w-6xl mx-auto space-y-8">
+      <main className="min-h-screen bg-[#F8FAFC] text-slate-800 p-4 md:p-8 font-sans pb-20">
+        <div className="max-w-7xl mx-auto space-y-8">
           
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
             <div>
-               <h1 className="text-3xl font-extrabold text-slate-800 tracking-tight">Your Health Report</h1>
-               <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-slate-500 mt-2">
-                  <span className="bg-white border border-slate-200 px-3 py-1 rounded-lg">ID: {sessionID}</span>
-                  <span className="bg-white border border-slate-200 px-3 py-1 rounded-lg">Age: {result.age}</span>
-                  <span className="bg-white border border-slate-200 px-3 py-1 rounded-lg">Date: {new Date().toLocaleDateString()}</span>
+               <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">Health Assessment</h1>
+               <div className="flex flex-wrap items-center gap-3 text-sm font-semibold text-slate-500 mt-4">
+                  <span className="bg-white border border-slate-200 px-4 py-1.5 rounded-full shadow-sm">ID: {sessionID}</span>
+                  <span className="bg-white border border-slate-200 px-4 py-1.5 rounded-full shadow-sm">Age: {result.age}</span>
+                  <span className="bg-white border border-slate-200 px-4 py-1.5 rounded-full shadow-sm">Date: {new Date().toLocaleDateString()}</span>
                </div>
             </div>
-            <button onClick={() => setStep(0)} className="mt-6 md:mt-0 px-6 py-3 bg-white border border-slate-200 hover:border-teal-300 hover:text-teal-700 font-bold rounded-xl shadow-sm transition-all">Done</button>
+            <button onClick={() => setStep(0)} className="mt-6 md:mt-0 px-8 py-4 bg-white border border-slate-200 hover:border-teal-300 hover:text-teal-700 font-bold rounded-2xl shadow-sm transition-all">Done</button>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -264,16 +262,16 @@ export default function Home() {
             {/* LEFT COLUMN: Main Score & Heatmap */}
             <div className="lg:col-span-5 space-y-8">
                 
-                <div className={`border-2 rounded-3xl p-8 text-center shadow-sm ${statusBg}`}>
-                    <div className="text-4xl mb-4">{statusIcon}</div>
-                    <div className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-2">Overall Wellness Score</div>
-                    <div className={`text-7xl font-black tracking-tighter mb-4 ${statusText}`}>{result.dfuScore}</div>
-                    <div className={`font-bold text-xl px-4 py-2 bg-white/60 rounded-xl inline-block ${statusText}`}>{result.status}</div>
-                    {isRisk && <p className="text-red-600 text-sm mt-4 font-medium">Please consult with a healthcare professional regarding these results.</p>}
+                <div className={`border-[3px] rounded-[2.5rem] p-10 text-center shadow-sm ${statusBg}`}>
+                    <div className="text-5xl mb-6">{statusIcon}</div>
+                    <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Overall Wellness Score</div>
+                    <div className={`text-8xl font-black tracking-tighter mb-6 ${statusText}`}>{result.dfuScore}</div>
+                    <div className={`font-bold text-xl px-6 py-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-sm inline-block ${statusText}`}>{result.status}</div>
+                    {isRisk && <p className="text-red-600 text-sm mt-6 font-semibold bg-red-100/50 p-4 rounded-xl">Please consult with a healthcare professional regarding these results.</p>}
                 </div>
 
-                <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm">
-                    <h3 className="text-lg font-bold text-slate-800 mb-6 text-center">Pressure Map</h3>
+                <div className="bg-white border border-slate-100 rounded-[2.5rem] p-10 shadow-sm">
+                    <h3 className="text-xl font-extrabold text-slate-800 mb-8 text-center tracking-tight">Pressure Distribution Map</h3>
                     <div className="h-72 flex items-center justify-center">
                         <FootMapZones pressures={result.pressures} />
                     </div>
@@ -283,53 +281,54 @@ export default function Home() {
             {/* RIGHT COLUMN: Algorithmic Data & Tips */}
             <div className="lg:col-span-7 space-y-8">
                 
-                <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm">
-                    <div className="mb-6">
-                        <h3 className="text-lg font-bold text-slate-800">Care Metrics Breakdown</h3>
-                        <p className="text-sm text-slate-500 mt-1">Calculated using our predictive EWMA algorithm.</p>
+                <div className="bg-white border border-slate-100 rounded-[2.5rem] p-10 shadow-sm">
+                    <div className="mb-8 flex justify-between items-center border-b border-slate-100 pb-6">
+                        <div>
+                            <h3 className="text-xl font-extrabold text-slate-800 tracking-tight">Care Metrics Breakdown</h3>
+                            <p className="text-sm text-slate-500 mt-1 font-medium">Calculated using EWMA predictive modeling.</p>
+                        </div>
+                        <div className="w-12 h-12 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center font-bold">PEC</div>
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100">
-                            <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Pressure Index</div>
-                            <div className="text-3xl font-black text-slate-700">{result.scores.PRS}</div>
+                    <div className="grid grid-cols-2 gap-5">
+                        <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100 transition-all hover:bg-slate-100 hover:scale-[1.02]">
+                            <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Pressure Index</div>
+                            <div className="text-4xl font-black text-slate-700">{result.scores.PRS}</div>
                         </div>
-                        <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100">
-                            <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Thermal Index</div>
-                            <div className="text-3xl font-black text-slate-700">{result.scores.TRS}</div>
+                        <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100 transition-all hover:bg-slate-100 hover:scale-[1.02]">
+                            <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Thermal Index</div>
+                            <div className="text-4xl font-black text-slate-700">{result.scores.TRS}</div>
                         </div>
-                        <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100">
-                            <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Moisture Index</div>
-                            <div className="text-3xl font-black text-slate-700">{result.scores.MRS}</div>
+                        <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100 transition-all hover:bg-slate-100 hover:scale-[1.02]">
+                            <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Moisture Index</div>
+                            <div className="text-4xl font-black text-slate-700">{result.scores.MRS}</div>
                         </div>
-                        <div className="p-5 rounded-2xl bg-slate-50 border border-slate-100">
-                            <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Tissue Integrity</div>
-                            <div className="text-3xl font-black text-slate-700">{result.scores.TBI}</div>
+                        <div className="p-6 rounded-3xl bg-slate-50 border border-slate-100 transition-all hover:bg-slate-100 hover:scale-[1.02]">
+                            <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Tissue Integrity</div>
+                            <div className="text-4xl font-black text-slate-700">{result.scores.TBI}</div>
                         </div>
                     </div>
                 </div>
 
-                <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-sm">
-                    <h3 className="text-lg font-bold text-slate-800 mb-6">Average Sensor Readings</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+                <div className="bg-white border border-slate-100 rounded-[2.5rem] p-10 shadow-sm">
+                    <h3 className="text-xl font-extrabold text-slate-800 mb-8 tracking-tight">Average Sensor Readings</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
                         {['Heel', 'Toe', 'Met', 'Mid'].map(zone => (
-                            <div key={zone} className="flex flex-col border-l-4 border-teal-200 pl-4 py-1">
-                                <span className="text-sm font-bold text-slate-400 uppercase">{zone} Pressure</span>
-                                <span className="font-bold text-slate-800 text-xl">{result.pressures[zone.toLowerCase()]} <span className="text-sm text-slate-400 font-medium">kPa</span></span>
+                            <div key={zone} className="flex flex-col border-l-4 border-teal-200 pl-5 py-1">
+                                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">{zone} Pressure</span>
+                                <span className="font-extrabold text-slate-800 text-2xl tracking-tight">{result.pressures[zone.toLowerCase()]} <span className="text-sm text-slate-400 font-medium">kPa</span></span>
                             </div>
                         ))}
-                        <div className="flex flex-col border-l-4 border-orange-200 pl-4 py-1">
-                            <span className="text-sm font-bold text-slate-400 uppercase">Skin Temp</span>
-                            <span className="font-bold text-slate-800 text-xl">{result.temp} <span className="text-sm text-slate-400 font-medium">°C</span></span>
+                        <div className="flex flex-col border-l-4 border-orange-200 pl-5 py-1">
+                            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Skin Temp</span>
+                            <span className="font-extrabold text-slate-800 text-2xl tracking-tight">{result.temp} <span className="text-sm text-slate-400 font-medium">°C</span></span>
                         </div>
-                        <div className="flex flex-col border-l-4 border-blue-200 pl-4 py-1">
-                            <span className="text-sm font-bold text-slate-400 uppercase">Humidity</span>
-                            <span className="font-bold text-slate-800 text-xl">{result.humidity} <span className="text-sm text-slate-400 font-medium">%</span></span>
+                        <div className="flex flex-col border-l-4 border-blue-200 pl-5 py-1">
+                            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Humidity</span>
+                            <span className="font-extrabold text-slate-800 text-2xl tracking-tight">{result.humidity} <span className="text-sm text-slate-400 font-medium">%</span></span>
                         </div>
                     </div>
                 </div>
-
-                <CareTip />
 
             </div>
           </div>
