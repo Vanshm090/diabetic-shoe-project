@@ -117,21 +117,31 @@ export default function Home() {
     </div>
   );
 
-  // --- COMPONENT: Academic Credit Footer ---
-  const AcademicCredit = () => (
-    <div className="w-full text-center space-y-1 my-6 text-slate-500">
-        <p className="text-sm font-semibold text-slate-700 tracking-wide uppercase">Made in PEC</p>
-        <p className="text-xs">Under the Expert Guidance of <span className="font-semibold text-teal-700">Dr. Jai Mala Gambhir</span></p>
-    </div>
+  // --- COMPONENT: Official Institutional Header ---
+  const AcademicHeader = () => (
+    <header className="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md border-b border-slate-200 py-3 px-6 md:px-12 flex flex-col md:flex-row items-center justify-between z-50 shadow-sm">
+       <div className="flex items-center gap-4 mb-2 md:mb-0">
+          <div className="w-10 h-10 bg-teal-600 text-white rounded-lg flex items-center justify-center font-black text-sm tracking-widest shadow-md">PEC</div>
+          <div className="text-left">
+             <p className="text-sm font-extrabold text-slate-800 uppercase tracking-wider">Punjab Engineering College</p>
+             <p className="text-[10px] font-bold text-teal-600 uppercase tracking-widest">Module Group • Ulcer Detector</p>
+          </div>
+       </div>
+       <div className="text-center md:text-right">
+          <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-0.5">Under the Expert Guidance of</p>
+          <p className="text-sm font-extrabold text-slate-800">Dr. Jai Mala Gambhir</p>
+       </div>
+    </header>
   );
 
 
   // --- SCREEN 0: SOOTHING LANDING PAGE ---
   if (step === 0) {
     return (
-      <main className="min-h-screen bg-slate-50 flex flex-col items-center justify-between p-6 text-slate-800 font-sans selection:bg-teal-200">
+      <main className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 pt-28 text-slate-800 font-sans selection:bg-teal-200">
+        <AcademicHeader />
+        
         <div className="flex-grow flex flex-col items-center justify-center w-full max-w-4xl text-center">
-            
             <div className="w-24 h-24 bg-teal-100 text-teal-600 rounded-3xl flex items-center justify-center shadow-sm mb-6 transform hover:scale-105 transition-transform">
                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
             </div>
@@ -149,7 +159,6 @@ export default function Home() {
 
             <CareTip />
         </div>
-        <AcademicCredit />
       </main>
     );
   }
@@ -157,9 +166,10 @@ export default function Home() {
   // --- SCREEN 1: INPUT & UPLOAD FILE ---
   if (step === 1) {
     return (
-      <main className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 font-sans">
+      <main className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 pt-28 font-sans">
+        <AcademicHeader />
+        
         <div className="w-full max-w-lg bg-white border border-slate-100 p-8 rounded-3xl shadow-sm z-10">
-          
           <div className="flex items-center justify-between mb-8">
               <div>
                   <h2 className="text-2xl font-bold text-slate-800">Patient Profile</h2>
@@ -206,7 +216,9 @@ export default function Home() {
   // --- SCREEN 2: SOOTHING LOADING SCREEN ---
   if (step === 2) {
     return (
-      <main className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center font-sans">
+      <main className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 pt-28 text-center font-sans">
+         <AcademicHeader />
+         
          <div className="flex-grow flex flex-col items-center justify-center w-full max-w-md">
              <div className="w-20 h-20 border-4 border-slate-200 border-t-teal-500 rounded-full animate-spin mb-8 shadow-sm"></div>
              <h2 className="text-2xl font-bold text-slate-800 mb-3">Reviewing Health Data</h2>
@@ -218,7 +230,6 @@ export default function Home() {
 
              <CareTip />
          </div>
-         <AcademicCredit />
       </main>
     );
   }
@@ -231,7 +242,9 @@ export default function Home() {
     const statusIcon = isRisk ? "⚠️" : "✨";
 
     return (
-      <main className="min-h-screen bg-slate-50 text-slate-800 p-4 md:p-8 font-sans pb-20">
+      <main className="min-h-screen bg-slate-50 text-slate-800 p-4 md:p-8 pt-28 font-sans pb-20">
+        <AcademicHeader />
+        
         <div className="max-w-6xl mx-auto space-y-8">
           
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
