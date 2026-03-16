@@ -108,19 +108,24 @@ export default function Home() {
   // --- COMPONENT: Immersive Glassmorphic Background ---
   const GlassBackground = () => (
       <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-          {/* High-Quality Hospital/Medical Tech Background Image */}
           <img 
             src="https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?q=80&w=2070&auto=format&fit=crop" 
             alt="Medical background" 
             className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-luminosity animate-[pulse_20s_ease-in-out_infinite]" 
           />
-          {/* Clinical Gradient Overlays to keep text readable */}
           <div className="absolute inset-0 bg-gradient-to-br from-teal-50/90 via-slate-100/80 to-blue-100/90 backdrop-blur-[30px]"></div>
           
-          {/* Animated Glow Orbs */}
           <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-teal-400/20 blur-[100px] animate-blob"></div>
           <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] rounded-full bg-blue-500/20 blur-[100px] animate-blob animation-delay-2000"></div>
       </div>
+  );
+
+  // --- COMPONENT: Official "Made in PEC" Badge ---
+  const MadeInPecBadge = () => (
+    <div className="glass-card px-5 py-2.5 rounded-full inline-flex items-center gap-3 mb-6 shadow-sm border border-white/80">
+       <span className="w-7 h-7 bg-teal-600 text-white rounded-full flex items-center justify-center font-black text-[10px] shadow-sm">PEC</span>
+       <span className="text-xs font-black text-slate-800 tracking-widest uppercase">Made In PEC</span>
+    </div>
   );
 
   return (
@@ -148,10 +153,7 @@ export default function Home() {
             {/* Left Side: Copy & Trust */}
             <div className="flex flex-col items-start text-left space-y-8 animate-fade-in">
                 
-                <div className="glass-card px-5 py-2.5 rounded-full inline-flex items-center gap-3">
-                   <span className="w-6 h-6 bg-teal-600 text-white rounded flex items-center justify-center font-bold text-[10px] shadow-sm">PEC</span>
-                   <span className="text-xs font-bold text-slate-700 tracking-widest uppercase">Clinical Diagnostics</span>
-                </div>
+                <MadeInPecBadge />
                 
                 <h1 className="text-6xl md:text-8xl font-black text-slate-800 tracking-tighter leading-tight drop-shadow-sm">
                     Smart<span className="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-blue-500">Sole</span><br/>System.
@@ -167,25 +169,25 @@ export default function Home() {
                     </button>
                 </div>
 
-                <div className="flex items-center gap-3 pt-6 border-t border-slate-300/50 w-full">
-                    <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=150&auto=format&fit=crop" className="w-12 h-12 rounded-full border-2 border-white shadow-md object-cover" alt="Doctor" />
+                <div className="flex items-center gap-4 pt-6 border-t border-slate-300/50 w-full mt-4">
+                    <div className="w-12 h-12 bg-white/60 rounded-full border-2 border-white shadow-sm flex items-center justify-center text-xl">👩‍⚕️</div>
                     <div>
-                        <p className="text-xs text-slate-500 uppercase tracking-widest font-bold">Under the Expert Guidance of</p>
+                        <p className="text-xs text-slate-500 uppercase tracking-widest font-bold">Module Group • Guided By</p>
                         <p className="text-sm font-black text-slate-800">Dr. Jai Mala Gambhir</p>
                     </div>
                 </div>
             </div>
 
-            {/* Right Side: Floating Glass Elements to fill space */}
+            {/* Right Side: Floating Glass Elements */}
             <div className="relative h-[600px] hidden lg:flex items-center justify-center animate-fade-in delay-200">
                 <div className="glass-card w-[80%] h-[90%] rounded-[3rem] p-8 flex flex-col justify-between relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-t from-teal-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
                     
-                    <div className="flex justify-between items-start">
-                        <div className="glass-input px-4 py-2 rounded-xl text-xs font-bold text-teal-700 flex items-center gap-2">
+                    <div className="flex justify-between items-start relative z-10">
+                        <div className="glass-input px-4 py-2 rounded-xl text-xs font-bold text-teal-700 flex items-center gap-2 shadow-sm">
                             <span className="w-2 h-2 bg-teal-500 rounded-full animate-ping"></span> Live Sensors
                         </div>
-                        <div className="glass-input px-4 py-2 rounded-xl text-xs font-bold text-slate-600">Model: EWMA-v2</div>
+                        <div className="glass-input px-4 py-2 rounded-xl text-xs font-bold text-slate-600 shadow-sm">Model: EWMA-v2</div>
                     </div>
 
                     <div className="w-full flex-grow flex items-center justify-center relative">
@@ -193,21 +195,20 @@ export default function Home() {
                         <FootMapZones pressures={null} isLeft={false} />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="glass-input p-4 rounded-2xl">
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">System Accuracy</p>
-                            <p className="text-2xl font-black text-slate-700">98.4%</p>
+                    <div className="grid grid-cols-2 gap-4 relative z-10">
+                        <div className="glass-input p-4 rounded-2xl shadow-sm">
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">System Accuracy</p>
+                            <p className="text-2xl font-black text-slate-800">98.4%</p>
                         </div>
-                        <div className="glass-input p-4 rounded-2xl">
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Data Rate</p>
-                            <p className="text-2xl font-black text-slate-700">50Hz</p>
+                        <div className="glass-input p-4 rounded-2xl shadow-sm">
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider mb-1">Data Rate</p>
+                            <p className="text-2xl font-black text-slate-800">50Hz</p>
                         </div>
                     </div>
                 </div>
                 
-                {/* Floating external widget */}
                 <div className="absolute top-20 -left-10 glass-card px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 animate-[float_6s_ease-in-out_infinite]">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-xl">🛡️</div>
+                    <div className="w-10 h-10 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center text-xl shadow-inner">🛡️</div>
                     <div>
                         <p className="text-[10px] uppercase tracking-widest text-slate-500 font-bold">Protocol</p>
                         <p className="text-sm font-black text-slate-800">Clinical Grade</p>
@@ -224,7 +225,6 @@ export default function Home() {
         <main className="min-h-screen relative z-10 flex items-center justify-center p-4 font-sans">
           <div className="w-full max-w-5xl glass-card p-8 md:p-12 rounded-[3rem] grid grid-cols-1 lg:grid-cols-3 gap-10 animate-fade-in">
             
-            {/* Left Sidebar Info */}
             <div className="col-span-1 border-r border-slate-300/30 pr-0 lg:pr-8 flex flex-col justify-between">
                 <div>
                     <h2 className="text-3xl font-black text-slate-800 tracking-tight mb-2">Patient Profile</h2>
@@ -237,21 +237,20 @@ export default function Home() {
                 </div>
                 
                 <div className="hidden lg:block">
-                    <img src="https://images.unsplash.com/photo-1551076805-e18690c5e561?q=80&w=600&auto=format&fit=crop" className="w-full h-32 object-cover rounded-2xl opacity-70 mb-4" alt="Lab" />
+                    <MadeInPecBadge />
                     <p className="text-xs text-slate-500 font-medium">Data is processed locally within the browser to ensure patient confidentiality.</p>
                 </div>
             </div>
 
-            {/* Right Forms */}
             <div className="col-span-2 space-y-8">
                 <div className="grid grid-cols-2 gap-6">
                     <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-2">Patient Age</label>
-                        <input type="number" value={age} onChange={(e) => setAge(e.target.value)} className="w-full glass-input text-slate-900 p-5 rounded-2xl focus:ring-2 focus:ring-teal-400 outline-none font-bold text-lg" placeholder="e.g. 55" />
+                        <input type="number" value={age} onChange={(e) => setAge(e.target.value)} className="w-full glass-input text-slate-900 p-5 rounded-2xl focus:ring-2 focus:ring-teal-400 outline-none font-bold text-lg transition-all" placeholder="e.g. 55" />
                     </div>
                     <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-2">Biological Sex</label>
-                        <select value={gender} onChange={(e) => setGender(e.target.value)} className="w-full glass-input text-slate-900 p-5 rounded-2xl focus:ring-2 focus:ring-teal-400 outline-none appearance-none font-bold text-lg">
+                        <select value={gender} onChange={(e) => setGender(e.target.value)} className="w-full glass-input text-slate-900 p-5 rounded-2xl focus:ring-2 focus:ring-teal-400 outline-none appearance-none font-bold text-lg transition-all">
                             <option value="Male">Male</option><option value="Female">Female</option>
                         </select>
                     </div>
@@ -260,13 +259,11 @@ export default function Home() {
                 <div>
                     <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-2">Bilateral Telemetry Upload</label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Left Upload */}
                         <div className="glass-input border-dashed border-2 hover:border-teal-400 rounded-3xl p-8 text-center cursor-pointer relative group transition-all hover:bg-white/60">
                             <input type="file" accept=".csv,.txt" onChange={handleLeftUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
                             <div className="w-14 h-14 bg-white/80 text-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:scale-110 transition-transform"><span className="font-black text-xl">L</span></div>
                             <p className="text-slate-800 font-bold">{leftName ? leftName : "Left Shoe Log"}</p>
                         </div>
-                        {/* Right Upload */}
                         <div className="glass-input border-dashed border-2 hover:border-teal-400 rounded-3xl p-8 text-center cursor-pointer relative group transition-all hover:bg-white/60">
                             <input type="file" accept=".csv,.txt" onChange={handleRightUpload} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
                             <div className="w-14 h-14 bg-white/80 text-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:scale-110 transition-transform"><span className="font-black text-xl">R</span></div>
@@ -276,7 +273,7 @@ export default function Home() {
                 </div>
 
                 <div className="flex justify-end gap-4 pt-4">
-                    <button onClick={() => setStep(0)} className="px-8 py-5 text-slate-500 font-bold hover:bg-white/40 rounded-2xl transition-all">Cancel</button>
+                    <button onClick={() => setStep(0)} className="px-8 py-5 text-slate-600 font-bold hover:bg-white/50 rounded-2xl transition-all">Cancel</button>
                     <button disabled={!age || !leftCsv || !rightCsv} onClick={() => setStep(2)} className="px-10 py-5 bg-teal-600 hover:bg-teal-500 disabled:bg-slate-300 disabled:text-slate-400 text-white font-bold rounded-2xl shadow-xl transition-all">
                         Execute Diagnostics &rarr;
                     </button>
@@ -287,10 +284,11 @@ export default function Home() {
         </main>
       )}
 
-      {/* --- SCREEN 2: BIO-SCANNER (Glass) --- */}
+      {/* --- SCREEN 2: BIO-SCANNER --- */}
       {step === 2 && (
-        <main className="min-h-screen relative z-10 flex items-center justify-center p-6 text-center font-sans animate-fade-in">
-           <div className="glass-card p-12 rounded-[3rem] w-full max-w-lg flex flex-col items-center relative overflow-hidden">
+        <main className="min-h-screen relative z-10 flex flex-col items-center justify-center p-6 text-center font-sans animate-fade-in">
+           <MadeInPecBadge />
+           <div className="glass-card p-12 rounded-[3rem] w-full max-w-lg flex flex-col items-center relative overflow-hidden mt-4">
                <div className="absolute inset-0 bg-gradient-to-t from-teal-400/20 to-transparent animate-[pulse_2s_infinite]"></div>
                
                <div className="relative w-32 h-40 mb-8 z-10">
@@ -298,7 +296,7 @@ export default function Home() {
                   <div className="absolute top-0 left-[-10%] w-[120%] h-1 bg-teal-400 shadow-[0_0_20px_#2dd4bf] animate-scanner"></div>
                </div>
                
-               <h2 className="text-3xl font-black text-slate-800 mb-2 relative z-10">Processing Telemetry</h2>
+               <h2 className="text-3xl font-black text-slate-800 mb-2 relative z-10 tracking-tight">Processing Telemetry</h2>
                <p className="text-slate-600 font-bold mb-10 h-6 relative z-10">{scanMessage}</p>
                
                <div className="w-full bg-white/50 border border-white p-1 rounded-full shadow-inner relative z-10">
@@ -308,60 +306,57 @@ export default function Home() {
         </main>
       )}
 
-      {/* --- SCREEN 3: DASHBOARD (Pro Glass Layout) --- */}
+      {/* --- SCREEN 3: DASHBOARD --- */}
       {step === 3 && result && (
         <main className="min-h-screen relative z-10 text-slate-800 p-4 md:p-8 font-sans pb-20 animate-fade-in">
           <div className="max-w-[1400px] mx-auto">
             
-            {/* Header Bar */}
-            <div className="glass-card p-6 rounded-3xl flex flex-col md:flex-row justify-between items-center mb-8">
-              <div className="flex items-center gap-6">
-                 <div className="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center font-black text-lg">PEC</div>
-                 <div>
+            <div className="glass-card p-6 rounded-[2rem] flex flex-col md:flex-row justify-between items-center mb-8 shadow-sm">
+              <div className="flex items-center gap-5">
+                 <div className="hidden sm:block"><MadeInPecBadge /></div>
+                 <div className="sm:-mt-6">
                     <h1 className="text-3xl font-black text-slate-900 tracking-tight">Clinical Assessment</h1>
-                    <p className="text-sm font-bold text-slate-500">Subject: {sessionID} • Age: {result.age} • Date: {new Date().toLocaleDateString()}</p>
+                    <p className="text-sm font-bold text-slate-600">Subject: {sessionID} • Age: {result.age} • Date: {new Date().toLocaleDateString()}</p>
                  </div>
               </div>
-              <button onClick={() => setStep(0)} className="mt-4 md:mt-0 px-8 py-4 bg-white/80 hover:bg-white text-slate-800 font-black rounded-2xl shadow-sm transition-all border border-white">Close Session</button>
+              <button onClick={() => setStep(0)} className="mt-4 md:mt-0 px-8 py-4 bg-white hover:bg-slate-50 text-slate-800 font-black rounded-2xl shadow-sm transition-all border border-slate-200">Close Session</button>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
               
-              {/* Central Status Hub */}
-              <div className="lg:col-span-12 glass-card rounded-[3rem] p-10 flex flex-col md:flex-row items-center justify-between overflow-hidden relative border-l-8 border-l-teal-500">
+              <div className="lg:col-span-12 glass-card rounded-[3rem] p-10 flex flex-col md:flex-row items-center justify-between overflow-hidden relative border-l-8 border-l-teal-500 shadow-[0_10px_40px_rgba(0,0,0,0.05)]">
                   <div className="absolute right-0 top-0 w-1/2 h-full bg-[url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?q=80&w=1000&auto=format&fit=crop')] bg-cover opacity-[0.05] mix-blend-multiply"></div>
-                  <div>
+                  <div className="relative z-10">
                       <p className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-2">Bilateral Diagnosis</p>
                       <h2 className={`text-6xl font-black tracking-tighter ${result.overallStatus.includes("WARNING") || result.overallStatus.includes("CRITICAL") ? "text-red-600" : "text-slate-800"}`}>
                           {result.overallStatus}
                       </h2>
-                      {result.overallStatus.includes("WARNING") && <p className="text-red-500 font-bold mt-2 bg-red-100/50 inline-block px-4 py-1 rounded-lg">High variance in ΔT or continuous focal pressure detected.</p>}
+                      {result.overallStatus.includes("WARNING") && <p className="text-red-600 font-bold mt-3 bg-red-100/80 border border-red-200 inline-block px-5 py-2 rounded-xl shadow-sm">High variance in ΔT or continuous focal pressure detected.</p>}
                   </div>
-                  <div className="mt-6 md:mt-0 text-center md:text-right">
+                  <div className="mt-6 md:mt-0 text-center md:text-right relative z-10">
                       <p className="text-sm font-bold uppercase tracking-widest text-slate-500 mb-1">Thermal Variance (ΔT)</p>
-                      <p className="text-5xl font-black text-orange-500">{result.abs_deltaT}°C</p>
+                      <p className="text-5xl font-black text-orange-500 drop-shadow-sm">{result.abs_deltaT}°C</p>
                   </div>
               </div>
 
-              {/* Left Foot Panel */}
-              <div className="lg:col-span-6 glass-card rounded-[3rem] p-8 flex flex-col items-center relative transition-transform hover:-translate-y-2">
+              <div className="lg:col-span-6 glass-card rounded-[3rem] p-8 flex flex-col items-center relative transition-transform hover:-translate-y-2 shadow-[0_10px_40px_rgba(0,0,0,0.04)]">
                   <div className="w-full flex justify-between items-center mb-8 border-b border-slate-300/30 pb-4">
-                      <h3 className="text-2xl font-black text-slate-800">Left Foot</h3>
-                      <span className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-sm ${result.left.riskLevel === 'HIGH' ? 'bg-red-500 text-white animate-pulse' : 'bg-white/80 text-slate-700 border border-white'}`}>{result.left.riskLevel} Risk</span>
+                      <h3 className="text-2xl font-black text-slate-800 tracking-tight">Left Foot</h3>
+                      <span className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-sm ${result.left.riskLevel === 'HIGH' ? 'bg-red-500 text-white animate-pulse' : 'bg-white text-slate-700 border border-slate-200'}`}>{result.left.riskLevel} Risk</span>
                   </div>
                   
                   <div className="h-72 w-full mb-8"><FootMapZones pressures={result.left.pressures} isLeft={true} /></div>
                   
                   <div className="grid grid-cols-2 gap-4 w-full">
-                      <div className="glass-input p-6 rounded-3xl">
+                      <div className="glass-input p-6 rounded-3xl transition-colors hover:bg-white/60">
                           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">DFU Model Score</p>
                           <p className="text-5xl font-black text-slate-800">{result.left.dfuScore}</p>
                       </div>
-                      <div className="glass-input p-6 rounded-3xl">
+                      <div className="glass-input p-6 rounded-3xl transition-colors hover:bg-white/60">
                           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Local Skin Temp</p>
                           <p className="text-5xl font-black text-orange-500">{result.left.temp}°</p>
                       </div>
-                      <div className="glass-input p-5 rounded-2xl col-span-2 flex justify-between items-center">
+                      <div className="glass-input p-5 rounded-2xl col-span-2 flex justify-between items-center transition-colors hover:bg-white/60">
                           <div><p className="text-[10px] font-bold text-slate-500 uppercase mb-1">Pressure (PRS)</p><p className="text-2xl font-black text-blue-600">{result.left.scores.PRS}</p></div>
                           <div><p className="text-[10px] font-bold text-slate-500 uppercase mb-1">Tissue (TBI)</p><p className="text-2xl font-black text-purple-600">{result.left.scores.TBI}</p></div>
                           <div><p className="text-[10px] font-bold text-slate-500 uppercase mb-1">Moisture (MRS)</p><p className="text-2xl font-black text-teal-600">{result.left.scores.MRS}</p></div>
@@ -369,25 +364,24 @@ export default function Home() {
                   </div>
               </div>
 
-              {/* Right Foot Panel */}
-              <div className="lg:col-span-6 glass-card rounded-[3rem] p-8 flex flex-col items-center relative transition-transform hover:-translate-y-2 delay-100">
+              <div className="lg:col-span-6 glass-card rounded-[3rem] p-8 flex flex-col items-center relative transition-transform hover:-translate-y-2 delay-100 shadow-[0_10px_40px_rgba(0,0,0,0.04)]">
                   <div className="w-full flex justify-between items-center mb-8 border-b border-slate-300/30 pb-4">
-                      <h3 className="text-2xl font-black text-slate-800">Right Foot</h3>
-                      <span className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-sm ${result.right.riskLevel === 'HIGH' ? 'bg-red-500 text-white animate-pulse' : 'bg-white/80 text-slate-700 border border-white'}`}>{result.right.riskLevel} Risk</span>
+                      <h3 className="text-2xl font-black text-slate-800 tracking-tight">Right Foot</h3>
+                      <span className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest shadow-sm ${result.right.riskLevel === 'HIGH' ? 'bg-red-500 text-white animate-pulse' : 'bg-white text-slate-700 border border-slate-200'}`}>{result.right.riskLevel} Risk</span>
                   </div>
                   
                   <div className="h-72 w-full mb-8"><FootMapZones pressures={result.right.pressures} isLeft={false} /></div>
                   
                   <div className="grid grid-cols-2 gap-4 w-full">
-                      <div className="glass-input p-6 rounded-3xl">
+                      <div className="glass-input p-6 rounded-3xl transition-colors hover:bg-white/60">
                           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">DFU Model Score</p>
                           <p className="text-5xl font-black text-slate-800">{result.right.dfuScore}</p>
                       </div>
-                      <div className="glass-input p-6 rounded-3xl">
+                      <div className="glass-input p-6 rounded-3xl transition-colors hover:bg-white/60">
                           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Local Skin Temp</p>
                           <p className="text-5xl font-black text-orange-500">{result.right.temp}°</p>
                       </div>
-                      <div className="glass-input p-5 rounded-2xl col-span-2 flex justify-between items-center">
+                      <div className="glass-input p-5 rounded-2xl col-span-2 flex justify-between items-center transition-colors hover:bg-white/60">
                           <div><p className="text-[10px] font-bold text-slate-500 uppercase mb-1">Pressure (PRS)</p><p className="text-2xl font-black text-blue-600">{result.right.scores.PRS}</p></div>
                           <div><p className="text-[10px] font-bold text-slate-500 uppercase mb-1">Tissue (TBI)</p><p className="text-2xl font-black text-purple-600">{result.right.scores.TBI}</p></div>
                           <div><p className="text-[10px] font-bold text-slate-500 uppercase mb-1">Moisture (MRS)</p><p className="text-2xl font-black text-teal-600">{result.right.scores.MRS}</p></div>
