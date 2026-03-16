@@ -5,7 +5,6 @@ import { useState, useEffect } from "react";
 // --- HELPER: Gentle Color Palette ---
 const getPressureColor = (value, weight) => {
     const w = weight || 70;
-    // Scale colors dynamically based on weight (heavier people naturally have higher baseline kPa)
     if (value < w * 2.0) return "#2dd4bf"; // Teal
     if (value < w * 3.5) return "#60a5fa"; // Blue
     if (value < w * 5.0) return "#fbbf24"; // Amber
@@ -30,7 +29,7 @@ const FootMapZones = ({ pressures, isLeft, weight }) => {
   const w = weight || 70;
   
   const renderZone = (cx, cy, r, value) => {
-      const isCritical = value >= (w * 5.0); // Critical threshold normalized to weight
+      const isCritical = value >= (w * 5.0);
       return (
           <g>
               {isCritical && <circle cx={cx} cy={cy} r={r * 1.5} fill="#f87171" className="opacity-50 animate-ping blur-md origin-center" />}
@@ -54,7 +53,7 @@ export default function Home() {
   const [step, setStep] = useState(0);
   const [age, setAge] = useState("");
   const [gender, setGender] = useState("Male");
-  const [weight, setWeight] = useState(""); // NEW: Weight state
+  const [weight, setWeight] = useState("");
   
   const [leftCsv, setLeftCsv] = useState("");
   const [leftName, setLeftName] = useState("");
@@ -86,7 +85,6 @@ export default function Home() {
       setScanMessage("Synchronizing Telemetry Arrays...");
       setResult(null); 
 
-      // Added weight to API payload
       const fetchDataPromise = fetch("/api/analyze", {
         method: "POST",
         body: JSON.stringify({ age, gender, weight, leftCsvData: leftCsv, rightCsvData: rightCsv }),
@@ -158,8 +156,10 @@ export default function Home() {
                 <div className="flex gap-4 w-full">
                     <button onClick={() => setStep(1)} className="w-full sm:w-auto px-10 py-5 bg-slate-900 hover:bg-slate-800 text-white text-lg font-bold rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.2)] transition-all transform hover:-translate-y-1">Initiate Assessment &rarr;</button>
                 </div>
+                
+                {/* RESTORED DOCTOR PROFILE PICTURE */}
                 <div className="flex items-center gap-4 pt-6 border-t border-slate-300/50 w-full mt-4">
-                    <div className="w-12 h-12 bg-white/60 rounded-full border-2 border-white shadow-sm flex items-center justify-center text-xl">👩‍⚕️</div>
+                    <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=150&auto=format&fit=crop" className="w-12 h-12 rounded-full border-2 border-white shadow-md object-cover" alt="Dr. Jai Mala Gambhir" />
                     <div><p className="text-xs text-slate-500 uppercase tracking-widest font-bold">Module Group • Guided By</p><p className="text-sm font-black text-slate-800">Dr. Jai Mala Gambhir</p></div>
                 </div>
             </div>
@@ -184,11 +184,11 @@ export default function Home() {
             </div>
 
             <div className="col-span-2 space-y-8">
-                {/* ADDED WEIGHT INPUT HERE */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-2">Age</label>
-                        <input type="number" value={age} onChange={(e) => setAge(e.target.value)} className="w-full glass-input text-slate-900 p-5 rounded-2xl focus:ring-2 focus:ring-teal-400 outline-none font-bold text-lg transition-all" placeholder="55" />
+                        {/* EMPTIED PLACEHOLDER */}
+                        <input type="number" value={age} onChange={(e) => setAge(e.target.value)} className="w-full glass-input text-slate-900 p-5 rounded-2xl focus:ring-2 focus:ring-teal-400 outline-none font-bold text-lg transition-all" placeholder="" />
                     </div>
                     <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-2">Sex</label>
@@ -198,7 +198,8 @@ export default function Home() {
                     </div>
                     <div>
                         <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 ml-2">Weight (kg)</label>
-                        <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} className="w-full glass-input text-slate-900 p-5 rounded-2xl focus:ring-2 focus:ring-teal-400 outline-none font-bold text-lg transition-all" placeholder="e.g. 75" />
+                        {/* EMPTIED PLACEHOLDER */}
+                        <input type="number" value={weight} onChange={(e) => setWeight(e.target.value)} className="w-full glass-input text-slate-900 p-5 rounded-2xl focus:ring-2 focus:ring-teal-400 outline-none font-bold text-lg transition-all" placeholder="" />
                     </div>
                 </div>
 
@@ -220,7 +221,6 @@ export default function Home() {
 
                 <div className="flex justify-end gap-4 pt-4">
                     <button onClick={() => setStep(0)} className="px-8 py-5 text-slate-600 font-bold hover:bg-white/50 rounded-2xl transition-all">Cancel</button>
-                    {/* Require weight to proceed */}
                     <button disabled={!age || !weight || !leftCsv || !rightCsv} onClick={() => setStep(2)} className="px-10 py-5 bg-teal-600 hover:bg-teal-500 disabled:bg-slate-300 disabled:text-slate-400 text-white font-bold rounded-2xl shadow-xl transition-all">
                         Execute Diagnostics &rarr;
                     </button>
