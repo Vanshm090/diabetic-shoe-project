@@ -3,75 +3,132 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request) {
   try {
-    const { weight } = await request.json();
-    const w = parseFloat(weight) || 65; // Matches your 65kg dashboard
-
+    const { age, gender, weight, leftCsvData, rightCsvData } = await request.json();
     
-    const jitter = (val, range = 0.5) => parseFloat((val + (Math.random() * range * 2 - range)).toFixed(1));
+    // Default to 70kg if weight isn't provided to prevent NaN errors
+    const w = parseFloat(weight) || 70; 
 
-   
-    const healthyPool = [
-      { prsL: 32.7, tbiL: 39.4, mrsL: 87.7, tempL: 30.7, dfuL: 35, prsR: 27.3, tbiR: 37.3, mrsR: 87.9, tempR: 30.3, dfuR: 32 },
-      { prsL: 31.2, tbiL: 38.1, mrsL: 86.5, tempL: 30.6, dfuL: 34, prsR: 26.8, tbiR: 36.9, mrsR: 87.1, tempR: 30.2, dfuR: 31 },
-      { prsL: 33.1, tbiL: 39.8, mrsL: 88.2, tempL: 30.8, dfuL: 36, prsR: 27.8, tbiR: 37.5, mrsR: 88.4, tempR: 30.4, dfuR: 33 },
-      // ... (The code will randomly jitter these so 3 sets effectively become 100+ variations)
-    ];
+    // CLINICAL BASELINES (Personalized by Weight)
+    // A heavier person naturally exerts more kPa. We adjust the expected normal baseline based on weight.
+    const MU_P = { toe: w * 1.5, met: w * 3.5, heel: w * 3.5, mid: w * 1.0 };
+    const SIGMA_P = w * 1.0; 
+    
+    const MU_T = 31.0; const SIGMA_T = 1.5;
+    const MU_RH = 60.0; const SIGMA_RH = 15.0;
 
+    // HELPER: Robust Bluetooth CSV Parser matching your exact columns
+    const parseCSV = (csvData) => {
+        const rows = csvData.trim().split('\n');
+        let P1=[], P2=[], P3=[], P4=[], T=[], RH=[];
+        
+        for (let i = 0; i < rows.length; i++) {
+            const line = rows[i].trim();
+            if (!line || line.toLowerCase().includes('time') || line.toLowerCase().includes('p1')) continue;
 
-    const base = healthyPool[Math.floor(Math.random() * healthyPool.length)];
-
-    // Construct the response to match the EXACT format your page.js expects
-    const responseData = {
-      weight: w,
-      abs_deltaT: 0.40, // Locked to healthy range
-      overallStatus: "Healthy Distribution", // Always Healthy
-      left: {
-        riskLevel: "LOW",
-        dfuScore: base.dfuL,
-        temp: jitter(base.tempL, 0.1),
-        humidity: Math.round(base.mrsL),
-        pressures: {
-          toe: Math.round(w * 1.4),
-          met: Math.round(w * 1.6),
-          heel: Math.round(w * 1.5),
-          mid: Math.round(w * 0.9)
-        },
-        scores: {
-          PRS: jitter(base.prsL).toString(),
-          TRS: "12.4", 
-          MRS: jitter(base.mrsL).toString(),
-          TBI: jitter(base.tbiL).toString()
+            const parts = line.split(/[\s,]+/);
+            if (parts.length >= 7) {
+                // COLUMN MAPPING: 1:Toe, 2:Metatarsal, 3:Heel, 4:Midfoot
+                P1.push(parseFloat(parts[1]) * 100); // Toe
+                P2.push(parseFloat(parts[2]) * 100); // Metatarsal
+                P3.push(parseFloat(parts[3]) * 100); // Heel
+                P4.push(parseFloat(parts[4]) * 100); // Midfoot
+                T.push(parseFloat(parts[5]));        // Temp
+                RH.push(parseFloat(parts[6]));       // Hum
+            }
         }
-      },
-      right: {
-        riskLevel: "LOW",
-        dfuScore: base.dfuR,
-        temp: jitter(base.tempR, 0.1),
-        humidity: Math.round(base.mrsR),
-        pressures: {
-          toe: Math.round(w * 1.35),
-          met: Math.round(w * 1.55),
-          heel: Math.round(w * 1.45),
-          mid: Math.round(w * 0.85)
-        },
-        scores: {
-          PRS: jitter(base.prsR).toString(),
-          TRS: "11.2",
-          MRS: jitter(base.mrsR).toString(),
-          TBI: jitter(base.tbiR).toString()
-        }
-      }
+        return { P1, P2, P3, P4, T, RH, numSamples: T.length };
     };
 
-    return NextResponse.json(responseData);
+    const leftData = parseCSV(leftCsvData);
+    const rightData = parseCSV(rightCsvData);
+
+    if (leftData.numSamples === 0 || rightData.numSamples === 0) throw new Error("Invalid CSV Data.");
+
+    // CALCULATE BILATERAL TEMPERATURE DIFFERENCE (The strongest predictor of DFU)
+    const leftMeanT = leftData.T.reduce((a,b)=>a+b,0) / leftData.numSamples;
+    const rightMeanT = rightData.T.reduce((a,b)=>a+b,0) / rightData.numSamples;
+    const abs_deltaT = Math.abs(leftMeanT - rightMeanT);
+
+    // HELPER: Core Algorithm Logic
+    const analyzeFoot = (data, deltaT) => {
+        const { P1, P2, P3, P4, T, RH, numSamples } = data;
+        
+        // Z-Score: We only penalize values ABOVE the personalized normal (Math.max 0)
+        const calcZ = (val, mu, sigma) => Math.max(0, (val - mu) / sigma);
+
+        let EWMA_P1=0, EWMA_P2=0, EWMA_P3=0, EWMA_P4=0;
+        let EWMA_T=0, EWMA_RH=0;
+        const lambda = 0.2;
+        let duty_P = 0, duty_RH = 0;
+
+        for (let i = 0; i < numSamples; i++) {
+            // Apply EWMA to smooth out walking steps into a sustained load metric
+            EWMA_P1 = lambda * calcZ(P1[i], MU_P.toe, SIGMA_P) + (1-lambda)*EWMA_P1;
+            EWMA_P2 = lambda * calcZ(P2[i], MU_P.met, SIGMA_P) + (1-lambda)*EWMA_P2;
+            EWMA_P3 = lambda * calcZ(P3[i], MU_P.heel, SIGMA_P) + (1-lambda)*EWMA_P3;
+            EWMA_P4 = lambda * calcZ(P4[i], MU_P.mid, SIGMA_P) + (1-lambda)*EWMA_P4;
+            EWMA_T  = lambda * calcZ(T[i], MU_T, SIGMA_T) + (1-lambda)*EWMA_T;
+            EWMA_RH = lambda * calcZ(RH[i], MU_RH, SIGMA_RH) + (1-lambda)*EWMA_RH;
+
+            // Duty cycle: Count how often pressure exceeds 2.5x body weight (sustained stress)
+            if ((P1[i]+P2[i]+P3[i]+P4[i])/4 > w*2.5) duty_P++;
+            // Duty cycle: Count how often humidity is danger-zone (>75%)
+            if (RH[i] > 75) duty_RH++;
+        }
+
+        const dutyCycleP = duty_P / numSamples;
+        const dutyCycleRH = duty_RH / numSamples;
+        
+        // Thermal Penalty starts only if diff > 1.0C
+        const Z_deltaT = Math.max(0, (deltaT - 1.0) / 1.0); 
+
+        // SUB-SCORES (Strictly bounded 0 to 100)
+        let PRS = Math.min(100, ((EWMA_P1+EWMA_P2+EWMA_P3+EWMA_P4) * 12) + (dutyCycleP * 40));
+        let TRS = Math.min(100, (Z_deltaT * 40) + (EWMA_T * 20));
+        let MRS = Math.min(100, (EWMA_RH * 25) + (dutyCycleRH * 50));
+        
+        // TBI is a multiplicative risk of Pressure, Temp, and Moisture
+        let TBI = Math.min(100, (PRS * 0.4) + (TRS * 0.3) + (MRS * 0.3));
+
+        // FINAL DFU SCORE (0-100 linear map)
+        let DFU_score = Math.round((0.4*PRS) + (0.3*TRS) + (0.2*MRS) + (0.1*TBI));
+
+        // Determine Risk Profile based on balanced score
+        let riskLevel = "LOW";
+        if (DFU_score > 75) riskLevel = "HIGH";
+        else if (DFU_score > 45 || deltaT > 2.2) riskLevel = "MODERATE";
+
+        return {
+            pressures: {
+                toe: Math.round(P1.reduce((a,b)=>a+b,0)/numSamples),
+                met: Math.round(P2.reduce((a,b)=>a+b,0)/numSamples),
+                heel: Math.round(P3.reduce((a,b)=>a+b,0)/numSamples),
+                mid: Math.round(P4.reduce((a,b)=>a+b,0)/numSamples),
+            },
+            temp: (T.reduce((a,b)=>a+b,0)/numSamples).toFixed(1),
+            humidity: Math.round(RH.reduce((a,b)=>a+b,0)/numSamples),
+            scores: { PRS: PRS.toFixed(1), TRS: TRS.toFixed(1), MRS: MRS.toFixed(1), TBI: TBI.toFixed(1) },
+            dfuScore: DFU_score,
+            riskLevel
+        };
+    };
+
+    const leftResult = analyzeFoot(leftData, abs_deltaT);
+    const rightResult = analyzeFoot(rightData, abs_deltaT);
+
+    const maxScore = Math.max(leftResult.dfuScore, rightResult.dfuScore);
+    let overallStatus = "Healthy Distribution";
+    
+    // Overall status is defined by the worst-performing foot
+    if (maxScore > 75) overallStatus = "CRITICAL ALERT";
+    else if (maxScore > 45 || abs_deltaT > 2.2) overallStatus = "DFU WARNING";
+
+    return NextResponse.json({
+        age, gender, weight, abs_deltaT: abs_deltaT.toFixed(2), overallStatus,
+        left: leftResult, right: rightResult
+    });
 
   } catch (error) {
-    // We return a fallback healthy object even on error to ensure showcase never fails
-    return NextResponse.json({
-        overallStatus: "Healthy Distribution",
-        abs_deltaT: "0.35",
-        left: { riskLevel: "LOW", dfuScore: 35, temp: "30.7", pressures: {toe:100, met:110, heel:105, mid:80}, scores: {PRS:"32.7", TBI:"39.4", MRS:"87.7"} },
-        right: { riskLevel: "LOW", dfuScore: 32, temp: "30.3", pressures: {toe:95, met:105, heel:100, mid:75}, scores: {PRS:"27.3", TBI:"37.3", MRS:"87.9"} }
-    });
+    return NextResponse.json({ error: error.message }, { status: 400 });
   }
 }
